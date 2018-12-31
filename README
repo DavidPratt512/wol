@@ -1,0 +1,3 @@
+A simple Python command line utility to use the Wake On Lan protocol.
+
+Allows for use of a config file.
