@@ -1,0 +1,11 @@
+# add an alias named "pc" with mac address 696969696969
+# [pc]
+# mac = 696969696969
+
+[pc]
+mac = 7824af3b55e3
+ip = infiniteloop.dynu.net
+port = 1729
+
+[lr]
+mac = 94-DE-80-A6-D1-8A
