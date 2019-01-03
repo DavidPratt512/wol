@@ -1,11 +1,25 @@
-# add an alias named "pc" with mac address 696969696969
-# [pc]
-# mac = 696969696969
+# This file must be in the same directory as wol.py.
 
-[pc]
-mac = 7824af3b55e3
-ip = infiniteloop.dynu.net
-port = 1729
+# You can create aliases for common use cases.
 
-[lr]
-mac = 94-DE-80-A6-D1-8A
+# If you frequently wake the computer in the living room (since nobody
+# in your family knows how to turn it on), you can do so quickly from 
+# the comfort of your room once you hear your name called.
+
+# To create an alias "lr" (short for living room), do this:
+# [lr]
+# mac = 12-34-56-78-90-ab
+
+# That will be enough if you are on the same network as the living room
+# computer. You can add parameters "ip", "port", and "secureon" on
+# additional lines if you require.
+
+# You may also create additional aliases by doing the same as above.
+# You may also modify the default settings if you wish. However, you
+# cannot create a default mac address, as you must always pass a
+# parameter to wol.py.
+
+[DEFAULT]
+ip = 255.255.255.255
+port = 9
+

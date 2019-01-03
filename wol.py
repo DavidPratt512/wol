@@ -46,7 +46,9 @@ def main():
     secureon = args.s
 
     config = configparser.ConfigParser()
-    # TODO: make this optional
+    # reading a file that is not present does not raise an error, so the
+    # the script can be ran without having to consider the case in which
+    # the config file is not present
     config.read(CONFIG_FILE)
 
     if mac in config.sections():
@@ -65,12 +67,14 @@ def main():
             secureon = config.get(alias, 'secureon', fallback=None)
     else:
         # user did not use an alias
-        # revert to defaults for command line arguments
+        # revert to defaults since options were not specified
+        # prefer defaults defined in config file over preset defaults
         if not ip:
-            ip = DEFAULT_IP
+            ip = config.get('DEFAULT', 'ip', fallback=DEFAULT_IP)
         if not port:
-            port = DEFAULT_PORT
-        # default for secureon is None
+            port = config.getint('DEFAULT', 'port', fallback=DEFAULT_PORT)
+        if not secureon:
+            secureon = config.get('DEFAULT', 'secureon', fallback=None)
 
     wake(mac, ip, port, secureon)
 
