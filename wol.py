@@ -8,7 +8,7 @@ import socket
 MAC_REGEX = re.compile('^([0-9a-fA-F]{2}[-:.]?){5}[0-9a-fA-F]{2}$')
 DEFAULT_IP = '255.255.255.255'
 DEFAULT_PORT = 9
-# requires that the wol_config file be in the same directory as wol.py
+# requires that the wol_config file be in the same directory as this file
 CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'wol_config')
 
 
@@ -56,7 +56,12 @@ def main():
     if mac in config.sections():
         # user has used an alias
         alias = mac
-        mac = config.get(mac, 'mac')
+        try:
+            # someone's config file is bound to be messed up...
+            mac = config.get(mac, 'mac')
+        except configparser.NoOptionError:
+            print(f'No mac address associated with {alias}.')
+            quit(1)
 
         # prioritizes command line arguments over config entries (!!!)
         # reverts to defaults if config file is unavailable or
@@ -85,7 +90,11 @@ def main():
         print(e.args[0])
     else:
         # no errors occurred
-        print(f'Magic Packet sent!')
+        print(f'Magic Packet sent!'
+              f'\n\t     Mac: {mac}'
+              f'\n\t      IP: {ip}'
+              f'\n\t    Port: {port}'
+              f'\n\tSecureOn: {secureon}\n')
 
 
 def wake(mac, ip='255.255.255.255', port=9, secureon=None):
