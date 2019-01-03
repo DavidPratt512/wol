@@ -78,7 +78,14 @@ def main():
         if not secureon:
             secureon = config.get('DEFAULT', 'secureon', fallback=None)
 
-    wake(mac, ip, port, secureon)
+    # display any errors in easy-to-read format
+    try:
+        wake(mac, ip, port, secureon)
+    except ValueError as e:
+        print(e.args[0])
+    else:
+        # no errors occurred
+        print(f'Magic Packet sent!')
 
 
 def wake(mac, ip='255.255.255.255', port=9, secureon=None):
