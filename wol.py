@@ -1,5 +1,6 @@
 import argparse
 import configparser
+import os
 import re
 import socket
 
@@ -7,7 +8,8 @@ import socket
 MAC_REGEX = re.compile('^([0-9a-fA-F]{2}[-:.]?){5}[0-9a-fA-F]{2}$')
 DEFAULT_IP = '255.255.255.255'
 DEFAULT_PORT = 9
-CONFIG_FILE = 'wol_config'
+# requires that the wol_config file be in the same directory as wol.py
+CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'wol_config')
 
 
 def main():
