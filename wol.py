@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import argparse
 import configparser
 import os
@@ -90,7 +92,7 @@ def main():
         print(e.args[0])
     else:
         # no errors occurred
-        print(f'Magic Packet sent!'
+        print('Magic Packet sent!'
               f'\n\t     Mac: {mac}'
               f'\n\t      IP: {ip}'
               f'\n\t    Port: {port}'
