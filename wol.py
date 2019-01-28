@@ -43,7 +43,7 @@ def make_magic(mac, secureon=None):
     # remove any punctuation from the mac address
     mac = clean_mac(mac)
 
-    if secureon:
+    if secureon is not None:
         # SecureOn passwords are formatted the same way as mac addresses
         # so they can be 'cleaned' the same way
         if not MAC_REGEX.match(secureon):
@@ -102,6 +102,7 @@ def main():
     # the config file is not present
     config.read(CONFIG_FILE)
 
+    # arguments automatically None if not specified in command line
     mac = args.mac
     ip = args.i
     port = args.p
@@ -120,11 +121,11 @@ def main():
 
     # prioritizes command line arguments over config entries
     # and prioritizes config defaults over built-in defaults (!!!)
-    if not ip:
+    if ip is None:
         ip = config.get(alias, 'ip', fallback=DEFAULT_IP)
-    if not port:
+    if port is None:
         port = config.getint(alias, 'port', fallback=DEFAULT_PORT)
-    if not secureon:
+    if secureon is None:
         secureon = config.get(alias, 'secureon', fallback=None)
 
     # display any errors in easy-to-read format
@@ -135,10 +136,10 @@ def main():
     else:
         # no errors occurred
         print('Magic Packet sent!'
-              f'\n\t     Mac: {mac}'
-              f'\n\t      IP: {ip}'
-              f'\n\t    Port: {port}'
-              f'\n\tSecureOn: {secureon}\n')
+              f'\n     Mac: {mac}'
+              f'\n      IP: {ip}'
+              f'\n    Port: {port}'
+              f'\nSecureOn: {secureon}\n')
 
 
 if __name__ == '__main__':
