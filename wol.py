@@ -114,7 +114,7 @@ def main():
         alias = mac
         try:
             # someone's config file is bound to be messed up...
-            mac = config.get(mac, 'mac')
+            mac = config.get(alias, 'mac')
         except configparser.NoOptionError:
             print(f'No mac address associated with {alias}.')
             raise SystemExit
