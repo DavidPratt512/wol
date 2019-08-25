@@ -1,4 +1,0 @@
-A simple Python command line utility to use the Wake On Lan protocol.
-You can save common use cases in the wol_config.ini file.
-
-Requires Python 3.6+
