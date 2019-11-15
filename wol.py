@@ -24,9 +24,9 @@ def wake(mac, ip='255.255.255.255', port=9, secureon=None):
 
     # create a UDP socket
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-    	# and allow it to broadcast
-    	sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    	sock.sendto(magic_packet, (ip, port))
+        # and allow it to broadcast
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        sock.sendto(magic_packet, (ip, port))
 
 
 def make_magic(mac, secureon=None):
