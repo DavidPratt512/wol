@@ -35,10 +35,6 @@ def make_magic(mac, secureon=None):
     password.
 
     """
-    if not MAC_REGEX.match(mac):
-        raise ValueError(f'Invalid mac address: {mac}')
-
-    # remove any punctuation from the mac address
     mac = clean_mac(mac)
 
     if secureon is not None:
@@ -58,9 +54,14 @@ def clean_mac(mac):
     Removes punctuation from a mac address. The input mac address need
     not be formatted 'neatly'.
 
-    Example: 7824-AF:3B-55.E3 -> 7824AF3B55E3
+    Example:
+         >>> clean_mac('7824-AF:3B-55.E3')
+         '7824AF3B55E3'
 
     """
+    if not MAC_REGEX.match(mac):
+        raise ValueError(f'Invalid mac address: {mac}')
+
     return ''.join(char for char in mac if char.isalnum())
 
 
