@@ -17,7 +17,7 @@ class WOLConfig:
     DEFAULTS = {
         "ip": "255.255.255.255",
         "port": 9,
-        "interface": socket.gethostbyname(socket.gethostname()),
+        "interface": None,
         "repeat": 1,
     }
 
@@ -115,12 +115,11 @@ def wake(*macs, ip="255.255.255.255", port=9, repeat=1, interface=None):
     the sending of magic packets. This can be done by adjusting the repeat
     keyword argument.
     """
-    if interface is None:
-        interface = WOLConfig.DEFAULTS.get("interface")
     magic_packets = [make_magic(*mac.split("/")) for mac in macs]
 
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-        sock.bind((interface, 0))
+        if interface is not None:
+            sock.bind((interface, 0))
         # allow UDP socket to broadcast
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         for magic_packet in magic_packets:
@@ -235,6 +234,7 @@ if __name__ == "__main__":
             print(e.args[0])
         else:
             if not quiet:
+                interface = wake_call.get('interface')
                 print(
                     "Sent!"
                     f"\n      Mac:\n           "
@@ -242,5 +242,5 @@ if __name__ == "__main__":
                     + f'\n       IP: {wake_call.get("ip")}'
                     f'\n     Port: {wake_call.get("port")}'
                     f'\n   Repeat: {wake_call.get("repeat")}'
-                    f'\nInterface: {wake_call.get("interface")}\n'
+                    f'\n{"Interface: %s" % interface if interface else ""}'
                 )
