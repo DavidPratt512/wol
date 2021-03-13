@@ -1,2 +1,7 @@
 /venv/
 /.idea/
+/docs/build/
+
+# for pyenv
+.python-version
+
