@@ -151,9 +151,13 @@ def clean_mac(mac):
          >>> clean_mac('7824-aF:3B-55.E3')
          '7824AF3B55E3'
     """
-    mac_regex = re.compile("^([0-9a-fA-F]{2}[-:.]?){5}[0-9a-fA-F]{2}$")
-    if not mac_regex.match(mac):
-        raise ValueError(f"Invalid MAC address or SecureOn password: {mac}")
+    try:
+        match = re.match(r"^([0-9a-fA-F]{2}[-:.]?){5}[0-9a-fA-F]{2}$", mac)
+    except TypeError:
+        match = False
+    finally:
+        if not match:
+            raise ValueError(f"Invalid MAC address or SecureOn password: {mac}")
 
     return "".join(char for char in mac if char.isalnum()).upper()
 

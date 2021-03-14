@@ -2,6 +2,9 @@
 /.idea/
 /docs/build/
 
+__pycache__/
+.coverage
+
 # for pyenv
 .python-version
 
