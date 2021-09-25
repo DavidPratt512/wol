@@ -12,6 +12,9 @@ import re
 import socket
 
 
+__version__ = "0.1.0"
+
+
 class WOLConfig:
 
     DEFAULTS = {
@@ -238,7 +241,7 @@ if __name__ == "__main__":
             print(e.args[0])
         else:
             if not quiet:
-                interface = wake_call.get('interface')
+                interface = wake_call.get("interface")
                 print(
                     "Sent!"
                     f"\n      Mac:\n           "

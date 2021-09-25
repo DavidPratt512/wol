@@ -5,4 +5,6 @@ WOL - Wake-On-LAN
    :maxdepth: 2
    :caption: Contents:
 
+   changelog
+
 .. include:: ../../README.rst
