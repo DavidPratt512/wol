@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "wol"
+version = "0.1.0"
+description = "Wake-On-LAN command line utility with configuration options."
+authors = ["David Pratt <davidpratt512@gmail.com>"]
+license = "MIT License"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+Sphinx = "^4.2.0"
+docutils = "^0.16.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
