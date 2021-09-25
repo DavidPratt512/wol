@@ -21,3 +21,4 @@ Added
 - This project now logs changes in this changelog.
 - This project now follows a versioning scheme.
 - This project now uses ``poetry`` for dependency management.
+- This project now uses GitHub actions to execute unit tests on pushes to ``master`` and on all pull requests.
