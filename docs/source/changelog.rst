@@ -12,6 +12,14 @@ All changes to this project on and after 2021-09-24 will be logged here.
 - Improved output to the console.
   See issue #9.
 
+[0.2.0] - 2021-09-25
+--------------------
+
+Changed
+^^^^^^^
+
+- Updated the license for 2021.
+
 [0.1.0] - 2021-09-24
 --------------------
 

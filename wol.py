@@ -10,9 +10,96 @@ import json
 import os
 import re
 import socket
+from collections import ChainMap, namedtuple
 
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
+
+
+class StructuredLog:
+    """
+    A table-like data structure for visual logging of magic packets sent.
+    """
+
+    _BLANK = None
+
+    def __init__(self, headers):
+        self._headers = tuple(headers)
+        self._rows = []
+        self._log_string = " ".join(self._headers)
+        self._changed_since_last_construct = False
+        self.LogRow = namedtuple("LogRow", self._headers)
+
+    @property
+    def headers(self):
+        return self._headers
+
+    def append(self, **fields):
+        """
+        Appends a record to the log using StructuredLog._BLANK as the
+        placeholder for values not given.
+        """
+        header_defaults = dict.fromkeys(self._headers, StructuredLog._BLANK)
+        self._rows.append(self.LogRow(**ChainMap(fields, header_defaults)))
+        self._changed_since_last_construct = True
+
+    def _max_field_length(self):
+        """
+        Utility method to find the length of the longest value under each
+        header.
+        """
+        return {
+            header: max(
+                len(header),
+                max(
+                    map(len, (str(getattr(row, header)) for row in self._rows)),
+                    default=0,
+                ),
+            )
+            for header in self._headers
+        }
+
+    def _construct_log_string(self):
+        """
+        Utility method to construct the self._log_string (structured table).
+        This is called from the __str__ method only when there have been
+        changes (appends) since the last run of this method.
+        """
+        max_field_length = self._max_field_length()
+
+        # Create the format string "{:<N}" for every field where N is the max
+        # field length for that header.
+        cell = {
+            header: "{{:<{}}}".format(length)
+            for header, length in max_field_length.items()
+        }
+
+        header_row = " ".join(
+            [cell[header].format(str(header)) for header in self._headers]
+        )
+        rows = [
+            " ".join(
+                [
+                    cell[header].format(str(getattr(row, header)))
+                    for header in self._headers
+                ]
+            )
+            for row in self._rows
+        ]
+        row_string = "\n".join(rows)
+        self._log_string = "{}\n{}".format(header_row, row_string)
+        self._changed_since_last_construct = False
+
+    def __str__(self):
+        if self._changed_since_last_construct:
+            self._construct_log_string()
+        return self._log_string
+
+    def __repr__(self):
+        return f"{type(self).__name__}({list(self._headers)!r})"
+
+    def __bool__(self):
+        return bool(self._rows)
 
 
 class WOLConfig:
@@ -232,6 +319,7 @@ if __name__ == "__main__":
         arg: parsed_args.get(ab) for arg, ab in arguments.items() if parsed_args.get(ab)
     }
 
+    log = StructuredLog(["MAC", "IP", "Port", "Repeat", "Interface"])
     wol_config = WOLConfig(config_fp, **args)
     for wake_call in wol_config.get_config(*macs_and_aliases):
         mac_addresses = wake_call.pop("macs")
@@ -240,14 +328,13 @@ if __name__ == "__main__":
         except ValueError as e:
             print(e.args[0])
         else:
-            if not quiet:
-                interface = wake_call.get("interface")
-                print(
-                    "Sent!"
-                    f"\n      Mac:\n           "
-                    + ("\n           ".join(mac_addresses))
-                    + f'\n       IP: {wake_call.get("ip")}'
-                    f'\n     Port: {wake_call.get("port")}'
-                    f'\n   Repeat: {wake_call.get("repeat")}'
-                    f'\n{"Interface: %s" % interface if interface else ""}'
+            for mac in mac_addresses:
+                log.append(
+                    MAC=mac,
+                    IP=wake_call.get("ip"),
+                    Port=wake_call.get("port"),
+                    Interface=wake_call.get("interface"),
+                    Repeat=wake_call.get("repeat"),
                 )
+    if log and not quiet:
+        print(log)
