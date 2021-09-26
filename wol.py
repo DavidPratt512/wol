@@ -74,10 +74,15 @@ class StructuredLog:
             for header, length in max_field_length.items()
         }
 
-        header_row = " ".join([cell[header].format(header) for header in self._headers])
+        header_row = " ".join(
+            [cell[header].format(str(header)) for header in self._headers]
+        )
         rows = [
             " ".join(
-                [cell[header].format(getattr(row, header)) for header in self._headers]
+                [
+                    cell[header].format(str(getattr(row, header)))
+                    for header in self._headers
+                ]
             )
             for row in self._rows
         ]
@@ -92,6 +97,9 @@ class StructuredLog:
 
     def __repr__(self):
         return f"{type(self).__name__}({list(self._headers)!r})"
+
+    def __bool__(self):
+        return bool(self._rows)
 
 
 class WOLConfig:
@@ -311,6 +319,7 @@ if __name__ == "__main__":
         arg: parsed_args.get(ab) for arg, ab in arguments.items() if parsed_args.get(ab)
     }
 
+    log = StructuredLog(["MAC", "IP", "Port", "Repeat", "Interface"])
     wol_config = WOLConfig(config_fp, **args)
     for wake_call in wol_config.get_config(*macs_and_aliases):
         mac_addresses = wake_call.pop("macs")
@@ -319,14 +328,13 @@ if __name__ == "__main__":
         except ValueError as e:
             print(e.args[0])
         else:
-            if not quiet:
-                interface = wake_call.get("interface")
-                print(
-                    "Sent!"
-                    f"\n      Mac:\n           "
-                    + ("\n           ".join(mac_addresses))
-                    + f'\n       IP: {wake_call.get("ip")}'
-                    f'\n     Port: {wake_call.get("port")}'
-                    f'\n   Repeat: {wake_call.get("repeat")}'
-                    f'\n{"Interface: %s" % interface if interface else ""}'
+            for mac in mac_addresses:
+                log.append(
+                    MAC=mac,
+                    IP=wake_call.get("ip"),
+                    Port=wake_call.get("port"),
+                    Interface=wake_call.get("interface"),
+                    Repeat=wake_call.get("repeat"),
                 )
+    if log and not quiet:
+        print(log)

@@ -113,6 +113,13 @@ def test_repr():
     assert repr(log) == "StructuredLog(['Name', 'Age', 'Occupation'])"
 
 
+def test_bool_matches_bool_rows():
+    log = StructuredLog("Name Age Occupation".split())
+    assert not bool(log)
+    log.append(Name="Alice", Age=28, Occupation="Student")
+    assert bool(log)
+
+
 def test_log_string_format():
     log = StructuredLog(["Name", "Age", "Occupation"])
     log.append(Name="Alice", Age=28, Occupation="Student")
@@ -123,6 +130,20 @@ def test_log_string_format():
         == "Name    Age Occupation      \n"
         + "Alice   28  Student         \n"
         + "Bob     4   Rocket Scientist\n"
+        + "Charles 65  Retired         "
+    )
+
+
+def test_log_string_format_with_value_that_is_None():
+    log = StructuredLog(["Name", "Age", "Occupation"])
+    log.append(Name="Alice", Age=28, Occupation="Student")
+    log.append(Name=None, Age=4, Occupation="Rocket Scientist")
+    log.append(Name="Charles", Age=65, Occupation="Retired")
+    assert (
+        str(log)
+        == "Name    Age Occupation      \n"
+        + "Alice   28  Student         \n"
+        + "None    4   Rocket Scientist\n"
         + "Charles 65  Retired         "
     )
 
