@@ -9,6 +9,7 @@ license = "MIT License"
 python = "^3.7"
 Sphinx = "^4.2.0"
 docutils = "^0.16.0"
+sphinx-rtd-theme = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"

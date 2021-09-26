@@ -9,8 +9,6 @@ All changes to this project on and after 2021-09-24 will be logged here.
 - Refactoring of configuration code so it is actually readable and maintainable.
   This will likely come with a change in configuration logic as well.
 - Refactoring of packet sending using dependency injection so testing is easier.
-- Improved output to the console.
-  See issue #9.
 
 [0.2.0] - 2021-09-25
 --------------------
@@ -18,6 +16,9 @@ All changes to this project on and after 2021-09-24 will be logged here.
 Changed
 ^^^^^^^
 
+- Console output is now in a tabular format.
+  See `issue #9 <https://github.com/DavidPratt512/wol/issues/9>`_.
+- Cleaned up python imports in test files.
 - Updated the license for 2021.
 
 [0.1.0] - 2021-09-24
