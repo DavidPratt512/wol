@@ -13,7 +13,7 @@ import socket
 from collections import ChainMap, namedtuple
 
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 
 class StructuredLog:
@@ -108,7 +108,7 @@ class WOLConfig:
         "ip": "255.255.255.255",
         "port": 9,
         "interface": None,
-        "repeat": 1,
+        "repeat": 0,
     }
 
     def __init__(self, config_file, **cli_kwargs):
@@ -188,7 +188,7 @@ class WOLConfig:
             yield {"macs": group_macs, **call}  # pretty hack-y using call here
 
 
-def wake(*macs, ip="255.255.255.255", port=9, repeat=1, interface=None):
+def wake(*macs, ip="255.255.255.255", port=9, repeat=0, interface=None):
     """
     Sends a magic packet for the corresponding MAC addresses and SecureOn
     passwords. Add a SecureOn password to a MAC address by appending the
@@ -213,7 +213,7 @@ def wake(*macs, ip="255.255.255.255", port=9, repeat=1, interface=None):
         # allow UDP socket to broadcast
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         for magic_packet in magic_packets:
-            for _ in range(repeat):
+            for _ in range(repeat + 1):
                 sock.sendto(magic_packet, (ip, port))
 
 
@@ -285,7 +285,7 @@ if __name__ == "__main__":
         "-r",
         metavar="repeat",
         type=int,
-        help="How many times to send each magic packet "
+        help="How many additional times to send each magic packet "
         f'(default {WOLConfig.DEFAULTS.get("repeat")}).',
     )
     argparser.add_argument(
