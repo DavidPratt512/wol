@@ -10,6 +10,15 @@ All changes to this project on and after 2021-09-24 will be logged here.
   This will likely come with a change in configuration logic as well.
 - Refactoring of packet sending using dependency injection so testing is easier.
 
+[0.2.1] - 2021-10-01
+--------------------
+
+Changed
+^^^^^^^
+
+- The meaning and behavior of the ``repeat`` parameter has been clarified.
+  If ``wake()`` is passed ``repeat=1``, the packet will be sent twice (repeated once).
+
 [0.2.0] - 2021-09-25
 --------------------
 
