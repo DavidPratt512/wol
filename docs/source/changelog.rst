@@ -10,6 +10,14 @@ All changes to this project on and after 2021-09-24 will be logged here.
   This will likely come with a change in configuration logic as well.
 - Refactoring of packet sending using dependency injection so testing is easier.
 
+[0.2.2] - 2022-02-15
+--------------------
+
+Changed
+^^^^^^^
+
+- Added long-form CLI arguments, such as ``--port`` and ``--repeat``.
+
 [0.2.1] - 2021-10-01
 --------------------
 
