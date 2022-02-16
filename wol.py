@@ -270,12 +270,14 @@ if __name__ == "__main__":
     )
     argparser.add_argument(
         "-i",
+        "--ip",
         metavar="ip",
         help="The IP address to send the magic packets to "
         f'(default {WOLConfig.DEFAULTS.get("ip")}).',
     )
     argparser.add_argument(
         "-p",
+        "--port",
         metavar="port",
         type=int,
         help="The port to send the magic packets to "
@@ -283,6 +285,7 @@ if __name__ == "__main__":
     )
     argparser.add_argument(
         "-r",
+        "--repeat",
         metavar="repeat",
         type=int,
         help="How many additional times to send each magic packet "
@@ -290,6 +293,7 @@ if __name__ == "__main__":
     )
     argparser.add_argument(
         "-n",
+        "--interface",
         metavar="interface",
         help="The interface to send magic packets from. Useful if there are "
         "multiple NICs on your machine (default "
@@ -297,27 +301,27 @@ if __name__ == "__main__":
     )
     argparser.add_argument(
         "-f",
+        "--config-file",
         metavar="file",
         help="The .json file to read configuration options from (default "
         f"{config_fp}).",
     )
     argparser.add_argument(
         "-q",
+        "--quiet",
         action="store_true",
         help="Run quietly, do not print out result of program unless an error "
         "occurred (default false).",
     )
     parsed_args = vars(argparser.parse_args())
 
-    config_fp = os.path.abspath(parsed_args.pop("f") or config_fp)
-    quiet = parsed_args.pop("q")
+    config_fp = os.path.abspath(parsed_args.pop("config_file") or config_fp)
+    quiet = parsed_args.pop("quiet")
     macs_and_aliases = parsed_args.pop("macs")
 
     # get rid of cli arguments from parsed args that were not specified by user
-    arguments = {"ip": "i", "port": "p", "repeat": "r", "interface": "n"}
-    args = {
-        arg: parsed_args.get(ab) for arg, ab in arguments.items() if parsed_args.get(ab)
-    }
+    arguments = ["ip", "port", "repeat", "interface"]
+    args = {arg: parsed_args.get(arg) for arg in arguments if parsed_args.get(arg)}
 
     log = StructuredLog(["MAC", "IP", "Port", "Repeat", "Interface"])
     wol_config = WOLConfig(config_fp, **args)
