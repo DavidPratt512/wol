@@ -318,6 +318,11 @@ if __name__ == "__main__":
         help="Run quietly, do not print out result of program unless an error "
         "occurred (default false).",
     )
+    argparser.add_argument(
+        "--version",
+        action="version",
+        version=__version__,
+    )
     parsed_args = vars(argparser.parse_args())
 
     config_fp = Path(parsed_args.pop("config_file") or config_fp)
