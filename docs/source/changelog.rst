@@ -3,6 +3,14 @@ Changelog
 
 All changes to this project on and after 2021-09-24 will be logged here.
 
+[0.3.1] - 2023-04-01
+--------------------
+
+Changed
+^^^^^^^
+
+- Add ``--version`` flag to CLI interface.
+
 [0.3.0] - 2023-04-01
 --------------------
 

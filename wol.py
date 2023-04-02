@@ -14,7 +14,7 @@ from collections import ChainMap, namedtuple
 from pathlib import Path
 
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 
 class StructuredLog:
