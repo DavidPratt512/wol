@@ -3,12 +3,17 @@ Changelog
 
 All changes to this project on and after 2021-09-24 will be logged here.
 
-[Unreleased]
-------------
+[0.3.0] - 2023-04-01
+--------------------
 
-- Refactoring of configuration code so it is actually readable and maintainable.
-  This will likely come with a change in configuration logic as well.
-- Refactoring of packet sending using dependency injection so testing is easier.
+Changed
+^^^^^^^
+
+- Respect ``XDG_CONFIG_HOME`` environment variable.
+- Default location of ``wol.json`` config file has changed to
+  ``${XDG_CONFIG_HOME:-~/.config}/wol/wol.json`` and
+  ``%userprofile%\.config\wol\wol.json`` on unix-like and Windows machines,
+  respectively.
 
 [0.2.2] - 2022-02-15
 --------------------
