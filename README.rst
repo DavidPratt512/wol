@@ -14,7 +14,7 @@ The full signature is
 
 .. code-block::
 
-   wol.py [-h] [-i ip] [-p port] [-r repeat] [-n interface] [-f file] [-q]
+   wol.py [-h] [-i ip] [-p port] [-r repeat] [-n interface] [-f file] [-q] [--version]
           MAC/SecureOn [MAC/SecureOn ...]
 
 Computers requiring a SecureOn password can be woken by separating the MAC address and SecureOn password with a
