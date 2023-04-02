@@ -11,6 +11,7 @@ import os
 import re
 import socket
 from collections import ChainMap, namedtuple
+from pathlib import Path
 
 
 __version__ = "0.2.2"
@@ -253,7 +254,11 @@ def clean_mac(mac):
 
 
 if __name__ == "__main__":
-    config_fp = os.path.join(os.path.expanduser("~"), ".config", "wol.json")
+    config_fp = (
+        Path(os.getenv("XDG_CONFIG_HOME", "~/.config")).expanduser().absolute()
+        / "wol"
+        / "wol.json"
+    )
 
     argparser = argparse.ArgumentParser(
         description=__doc__,
@@ -315,7 +320,7 @@ if __name__ == "__main__":
     )
     parsed_args = vars(argparser.parse_args())
 
-    config_fp = os.path.abspath(parsed_args.pop("config_file") or config_fp)
+    config_fp = Path(parsed_args.pop("config_file") or config_fp)
     quiet = parsed_args.pop("quiet")
     macs_and_aliases = parsed_args.pop("macs")
 

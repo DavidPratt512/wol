@@ -30,7 +30,7 @@ Configuration Setup
 
 Optionally, users may create a ``.json`` file to save common use cases and change default behavior.
 
-By default, ``wol.py`` will look in ``~/.config/`` on a Unix like machine or ``%userprofile%/.config/`` on Windows for ``wol.json``.
+By default, ``wol.py`` will look in ``${XDG_CONFIG_HOME:-~/.config}/wol`` on a Unix like machine or ``%userprofile%\.config\wol`` on Windows for ``wol.json``.
 Users may specify the ``-f`` flag to point to another ``.json`` file instead.
 
 The ``.json`` file is meant to contain *groups* of MAC addresses with corresponding IP addresses, ports, repeat counts,
