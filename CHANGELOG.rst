@@ -3,6 +3,21 @@ Changelog
 
 All changes to this project on and after 2021-09-24 will be logged here.
 
+Unreleased
+----------
+
+Removed
+^^^^^^^
+
+- Removed read-the-docs site and GitHub webhook.
+
+Changed
+^^^^^^^
+
+- (dev) Added multiple python versions to CI testing.
+- (dev) Removed poetry build system in favor of a simple ``requirements-dev.txt``.
+- (dev) Introduced pre-commit.
+
 [0.3.1] - 2023-04-01
 --------------------
 
