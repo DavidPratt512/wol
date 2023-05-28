@@ -11,10 +11,124 @@ import os
 import re
 import socket
 from collections import ChainMap, namedtuple
+from dataclasses import dataclass, field, fields
 from pathlib import Path
-
+from typing import Optional, Dict, Set, Type, TypeVar
 
 __version__ = '0.3.1'
+T = TypeVar('T')
+
+
+@dataclass(frozen=True)
+class MacAddress:
+    mac: str
+    secure_on: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class DefaultConfig:
+    ip: str = '255.255.255.255'
+    port: int = 9
+    interface: Optional[str] = None
+    repeat: int = 0
+    quiet: bool = False
+    macs: Set[MacAddress] = field(default_factory=set)
+    groups: Set[str] = field(default_factory=set)
+
+
+@dataclass(frozen=True)
+class GroupConfig:
+    name: str
+    ip: Optional[str] = None
+    port: Optional[int] = None
+    repeat: Optional[int] = None
+    interface: Optional[str] = None
+    macs: Set[MacAddress] = field(default_factory=set)
+    also: Set[str] = field(default_factory=set)
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __eq__(self, other):
+        if isinstance(other, GroupConfig):
+            return other.name == self.name
+        return False
+
+
+@dataclass(frozen=True)
+class Config:
+    default: DefaultConfig = DefaultConfig()
+    groups: Set[GroupConfig] = field(default_factory=set)
+
+
+@dataclass(frozen=True)
+class WakeCommand:
+    ip: str
+    port: int
+    repeat: int
+    mac: MacAddress
+    interface: Optional[str] = None
+
+
+def _dataclass_from_dict(cls: Type[T], d: Dict) -> T:
+    valid_field_names = [f.name for f in fields(cls)]
+    valid_kwargs = {k: v for k, v in d.items() if k in valid_field_names}
+    return cls(**valid_kwargs)
+
+
+def _parse(d: Dict, cls: Type[T], extra_key: str) -> T:
+    d['macs'] = {parse_mac(mac) for mac in set(d.get('macs', set()))}
+    d[extra_key] = set(d.get(extra_key, set()))
+    return _dataclass_from_dict(cls, d)
+
+
+def parse_config_dict(d: Dict) -> Config:
+    default_config = _parse(d.get('default', {}), DefaultConfig, 'groups')
+    group_configs = {_parse(gc, GroupConfig, 'also') for gc in d.get('groups', [])}
+    return Config(default=default_config, groups=group_configs)
+
+
+def read_json_config(json_filepath: Path) -> Dict:
+    with open(json_filepath) as f:
+        return json.load(f)
+
+
+def merge_cli_and_config(cli: DefaultConfig, config: DefaultConfig) -> DefaultConfig:
+    return _dataclass_from_dict(
+        DefaultConfig,
+        {
+            f.name: (
+                getattr(config, f.name)
+                if f.default == (cli_val := getattr(cli, f.name))
+                else cli_val
+            )
+            for f in fields(cli)
+        },
+    )
+
+
+def set_config_with_cli(config: Config, cli: DefaultConfig) -> Config:
+    new_default = merge_cli_and_config(cli, config.default)
+    return Config(
+        default=new_default,
+        groups=config.groups,
+    )
+
+
+def parse_args(argparser: argparse.ArgumentParser) -> DefaultConfig:
+    # Interface is wrong. Need to have read config file at this point.
+    # How to determine if argument is group or mac?
+    #   a) try/except parse_mac(arg)
+    #   b) lookup group config with name `arg`; found -> is group (not mac)
+    args = vars(argparser.parse_args())
+    macs = set()
+    groups = set()
+    for mac in args.get('macs', []):
+        pass
+
+
+def parse_mac(mac: str) -> MacAddress:
+    return MacAddress(*mac.split('/', maxsplit=1))
 
 
 class StructuredLog:
