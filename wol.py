@@ -104,7 +104,6 @@ class StructuredLog:
 
 
 class WOLConfig:
-
     DEFAULTS = {
         "ip": "255.255.255.255",
         "port": 9,

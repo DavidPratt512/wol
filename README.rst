@@ -1,3 +1,7 @@
+.. image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit
+   :target: https://github.com/pre-commit/pre-commit
+   :alt: pre-commit
+
 **WOL** is a simple Python command line interface to the Wake-On-LAN protocol.
 Behavior can be configured in a ``.json`` file.
 
