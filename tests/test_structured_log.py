@@ -1,4 +1,5 @@
 import pytest
+
 from wol import StructuredLog
 
 

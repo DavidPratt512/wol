@@ -1,8 +1,10 @@
 import json
-import pytest
 import re
-import wol
 from pathlib import Path
+
+import pytest
+
+import wol
 
 
 CONFIG_PATH = Path(__file__).parent / 'configs'

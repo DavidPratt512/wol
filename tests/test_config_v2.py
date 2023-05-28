@@ -1,14 +1,12 @@
 import pytest
 
-from wol import (
-    GroupConfig,
-    parse_config_dict,
-    Config,
-    DefaultConfig,
-    MacAddress,
-    parse_mac,
-    merge_cli_and_config,
-)
+from wol import Config
+from wol import DefaultConfig
+from wol import GroupConfig
+from wol import MacAddress
+from wol import merge_cli_and_config
+from wol import parse_config_dict
+from wol import parse_mac
 
 parse_config_args = [
     (
