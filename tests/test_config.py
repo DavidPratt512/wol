@@ -5,12 +5,12 @@ import wol
 from pathlib import Path
 
 
-CONFIG_PATH = Path(__file__).parent / "configs"
+CONFIG_PATH = Path(__file__).parent / 'configs'
 
 
 @pytest.mark.parametrize(
-    "config_filename",
-    [f for f in CONFIG_PATH.iterdir() if re.match(r"^default-\d+\.json$", f.name)],
+    'config_filename',
+    [f for f in CONFIG_PATH.iterdir() if re.match(r'^default-\d+\.json$', f.name)],
 )
 def test_default(config_filename):
     """
@@ -18,7 +18,7 @@ def test_default(config_filename):
     file.
     """
     config_file = CONFIG_PATH / config_filename
-    config_file_dict = json.loads(config_file.read_text())["DEFAULT"]
+    config_file_dict = json.loads(config_file.read_text())['DEFAULT']
 
     wol_config = wol.WOLConfig(config_file)
 
@@ -34,7 +34,7 @@ def test_default_file_not_found():
     # guarentee a nonexistent file by looking for a longer filename than the
     # longest filename in a directory
     longest_filename = max(CONFIG_PATH.iterdir(), key=lambda p: len(p.name))
-    nonexistent_file = longest_filename.parent / f"{longest_filename.name}.not-here"
+    nonexistent_file = longest_filename.parent / f'{longest_filename.name}.not-here'
 
     wol_config = wol.WOLConfig(nonexistent_file)
 

@@ -3,6 +3,7 @@ repos:
     rev: v4.4.0
     hooks:
     -   id: check-yaml
+    -   id: double-quote-string-fixer
     -   id: end-of-file-fixer
     -   id: requirements-txt-fixer
     -   id: trailing-whitespace
@@ -10,3 +11,4 @@ repos:
     rev: 23.3.0
     hooks:
     -   id: black
+        args: [--skip-string-normalization]

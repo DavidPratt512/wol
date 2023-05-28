@@ -14,7 +14,7 @@ from collections import ChainMap, namedtuple
 from pathlib import Path
 
 
-__version__ = "0.3.1"
+__version__ = '0.3.1'
 
 
 class StructuredLog:
@@ -27,9 +27,9 @@ class StructuredLog:
     def __init__(self, headers):
         self._headers = tuple(headers)
         self._rows = []
-        self._log_string = " ".join(self._headers)
+        self._log_string = ' '.join(self._headers)
         self._changed_since_last_construct = False
-        self.LogRow = namedtuple("LogRow", self._headers)
+        self.LogRow = namedtuple('LogRow', self._headers)
 
     @property
     def headers(self):
@@ -68,18 +68,18 @@ class StructuredLog:
         """
         max_field_length = self._max_field_length()
 
-        # Create the format string "{:<N}" for every field where N is the max
+        # Create the format string '{:<N}' for every field where N is the max
         # field length for that header.
         cell = {
-            header: "{{:<{}}}".format(length)
+            header: '{{:<{}}}'.format(length)
             for header, length in max_field_length.items()
         }
 
-        header_row = " ".join(
+        header_row = ' '.join(
             [cell[header].format(str(header)) for header in self._headers]
         )
         rows = [
-            " ".join(
+            ' '.join(
                 [
                     cell[header].format(str(getattr(row, header)))
                     for header in self._headers
@@ -87,8 +87,8 @@ class StructuredLog:
             )
             for row in self._rows
         ]
-        row_string = "\n".join(rows)
-        self._log_string = "{}\n{}".format(header_row, row_string)
+        row_string = '\n'.join(rows)
+        self._log_string = '{}\n{}'.format(header_row, row_string)
         self._changed_since_last_construct = False
 
     def __str__(self):
@@ -97,7 +97,7 @@ class StructuredLog:
         return self._log_string
 
     def __repr__(self):
-        return f"{type(self).__name__}({list(self._headers)!r})"
+        return f'{type(self).__name__}({list(self._headers)!r})'
 
     def __bool__(self):
         return bool(self._rows)
@@ -105,10 +105,10 @@ class StructuredLog:
 
 class WOLConfig:
     DEFAULTS = {
-        "ip": "255.255.255.255",
-        "port": 9,
-        "interface": None,
-        "repeat": 0,
+        'ip': '255.255.255.255',
+        'port': 9,
+        'interface': None,
+        'repeat': 0,
     }
 
     def __init__(self, config_file, **cli_kwargs):
@@ -118,12 +118,12 @@ class WOLConfig:
         # prefer configuration options in this order:
         # cli > alias config > default config > class defaults
         self._default_config = self.DEFAULTS.copy()
-        self._default_config.update(self._user_config.get("DEFAULT", self.DEFAULTS))
+        self._default_config.update(self._user_config.get('DEFAULT', self.DEFAULTS))
         self._cli_arguments = cli_kwargs
 
     def _init_dict(self):
         try:
-            with open(self._config_file, "r", encoding="utf-8") as f:
+            with open(self._config_file, 'r', encoding='utf-8') as f:
                 config = json.load(f)
             return config
         except FileNotFoundError:
@@ -143,19 +143,19 @@ class WOLConfig:
         alias_config = self._user_config.get(alias, alias)
 
         try:
-            groups.update(set(alias_config.pop("groups")))
+            groups.update(set(alias_config.pop('groups')))
         except (KeyError, AttributeError):
             pass
 
         try:
-            macs = alias_config.pop("macs")
+            macs = alias_config.pop('macs')
         except (KeyError, AttributeError):
             macs = []
 
         if isinstance(alias_config, str):  # assume alias_config is mac address
             config = self._default_config.copy()
             config.update(self._cli_arguments)
-            yield {"macs": [alias_config], **config}
+            yield {'macs': [alias_config], **config}
             return
 
         # alias_config is a dictionary
@@ -163,7 +163,7 @@ class WOLConfig:
         config.update(alias_config)
         config.update(self._cli_arguments)
         if macs:
-            yield {"macs": macs, **config}
+            yield {'macs': macs, **config}
         for group in groups - seen:
             yield from self._process_alias(group, seen=seen, groups=groups)
 
@@ -177,18 +177,18 @@ class WOLConfig:
             calls.extend(list(self._process_alias(alias)))
 
         def call_params(call_dict):
-            return tuple(v for k, v in call_dict.items() if k != "macs")
+            return tuple(v for k, v in call_dict.items() if k != 'macs')
 
         calls.sort(key=call_params)
 
         for _, group in itertools.groupby(calls, key=call_params):
             group_macs = []
             for call in group:
-                group_macs.extend(call.pop("macs"))
-            yield {"macs": group_macs, **call}  # pretty hack-y using call here
+                group_macs.extend(call.pop('macs'))
+            yield {'macs': group_macs, **call}  # pretty hack-y using call here
 
 
-def wake(*macs, ip="255.255.255.255", port=9, repeat=0, interface=None):
+def wake(*macs, ip='255.255.255.255', port=9, repeat=0, interface=None):
     """
     Sends a magic packet for the corresponding MAC addresses and SecureOn
     passwords. Add a SecureOn password to a MAC address by appending the
@@ -205,7 +205,7 @@ def wake(*macs, ip="255.255.255.255", port=9, repeat=0, interface=None):
     the sending of magic packets. This can be done by adjusting the repeat
     keyword argument.
     """
-    magic_packets = [make_magic(*mac.split("/")) for mac in macs]
+    magic_packets = [make_magic(*mac.split('/')) for mac in macs]
 
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
         if interface is not None:
@@ -227,9 +227,9 @@ def make_magic(mac, secureon=None):
         # SecureOn passwords are formatted the same way as mac addresses
         # so they can be 'cleaned' the same way
         secureon = clean_mac(secureon)
-        return bytes.fromhex("F" * 12 + mac * 16 + secureon)
+        return bytes.fromhex('F' * 12 + mac * 16 + secureon)
     else:
-        return bytes.fromhex("F" * 12 + mac * 16)
+        return bytes.fromhex('F' * 12 + mac * 16)
 
 
 def clean_mac(mac):
@@ -242,100 +242,100 @@ def clean_mac(mac):
          '7824AF3B55E3'
     """
     try:
-        match = re.match(r"^([0-9a-fA-F]{2}[-:.]?){5}[0-9a-fA-F]{2}$", mac)
+        match = re.match(r'^([0-9a-fA-F]{2}[-:.]?){5}[0-9a-fA-F]{2}$', mac)
     except TypeError:
         match = False
     finally:
         if not match:
-            raise ValueError(f"Invalid MAC address or SecureOn password: {mac}")
+            raise ValueError(f'Invalid MAC address or SecureOn password: {mac}')
 
-    return "".join(char for char in mac if char.isalnum()).upper()
+    return ''.join(char for char in mac if char.isalnum()).upper()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     config_fp = (
-        Path(os.getenv("XDG_CONFIG_HOME", "~/.config")).expanduser().absolute()
-        / "wol"
-        / "wol.json"
+        Path(os.getenv('XDG_CONFIG_HOME', '~/.config')).expanduser().absolute()
+        / 'wol'
+        / 'wol.json'
     )
 
     argparser = argparse.ArgumentParser(
         description=__doc__,
-        epilog="Contribute at https://github.com/davidpratt512/wol.",
+        epilog='Contribute at https://github.com/davidpratt512/wol.',
     )
     argparser.add_argument(
-        "macs",
-        nargs="+",
-        metavar="MAC/SecureOn",
-        help="The mac addresses or groups of the computers you wish to wake. "
-        "To add a SecureOn password, enter the mac address and SecureOn "
+        'macs',
+        nargs='+',
+        metavar='MAC/SecureOn',
+        help='The mac addresses or groups of the computers you wish to wake. '
+        'To add a SecureOn password, enter the mac address and SecureOn '
         'password separated by a "/": <MAC>/<SecureOn>. To define groups,'
-        f" create/edit the configuration file at {config_fp}.",
+        f' create/edit the configuration file at {config_fp}.',
     )
     argparser.add_argument(
-        "-i",
-        "--ip",
-        metavar="ip",
-        help="The IP address to send the magic packets to "
+        '-i',
+        '--ip',
+        metavar='ip',
+        help='The IP address to send the magic packets to '
         f'(default {WOLConfig.DEFAULTS.get("ip")}).',
     )
     argparser.add_argument(
-        "-p",
-        "--port",
-        metavar="port",
+        '-p',
+        '--port',
+        metavar='port',
         type=int,
-        help="The port to send the magic packets to "
+        help='The port to send the magic packets to '
         f'(default {WOLConfig.DEFAULTS.get("port")}).',
     )
     argparser.add_argument(
-        "-r",
-        "--repeat",
-        metavar="repeat",
+        '-r',
+        '--repeat',
+        metavar='repeat',
         type=int,
-        help="How many additional times to send each magic packet "
+        help='How many additional times to send each magic packet '
         f'(default {WOLConfig.DEFAULTS.get("repeat")}).',
     )
     argparser.add_argument(
-        "-n",
-        "--interface",
-        metavar="interface",
-        help="The interface to send magic packets from. Useful if there are "
-        "multiple NICs on your machine (default "
+        '-n',
+        '--interface',
+        metavar='interface',
+        help='The interface to send magic packets from. Useful if there are '
+        'multiple NICs on your machine (default '
         f'{WOLConfig.DEFAULTS.get("interface")}).',
     )
     argparser.add_argument(
-        "-f",
-        "--config-file",
-        metavar="file",
-        help="The .json file to read configuration options from (default "
-        f"{config_fp}).",
+        '-f',
+        '--config-file',
+        metavar='file',
+        help='The .json file to read configuration options from (default '
+        f'{config_fp}).',
     )
     argparser.add_argument(
-        "-q",
-        "--quiet",
-        action="store_true",
-        help="Run quietly, do not print out result of program unless an error "
-        "occurred (default false).",
+        '-q',
+        '--quiet',
+        action='store_true',
+        help='Run quietly, do not print out result of program unless an error '
+        'occurred (default false).',
     )
     argparser.add_argument(
-        "--version",
-        action="version",
+        '--version',
+        action='version',
         version=__version__,
     )
     parsed_args = vars(argparser.parse_args())
 
-    config_fp = Path(parsed_args.pop("config_file") or config_fp)
-    quiet = parsed_args.pop("quiet")
-    macs_and_aliases = parsed_args.pop("macs")
+    config_fp = Path(parsed_args.pop('config_file') or config_fp)
+    quiet = parsed_args.pop('quiet')
+    macs_and_aliases = parsed_args.pop('macs')
 
     # get rid of cli arguments from parsed args that were not specified by user
-    arguments = ["ip", "port", "repeat", "interface"]
+    arguments = ['ip', 'port', 'repeat', 'interface']
     args = {arg: parsed_args.get(arg) for arg in arguments if parsed_args.get(arg)}
 
-    log = StructuredLog(["MAC", "IP", "Port", "Repeat", "Interface"])
+    log = StructuredLog(['MAC', 'IP', 'Port', 'Repeat', 'Interface'])
     wol_config = WOLConfig(config_fp, **args)
     for wake_call in wol_config.get_config(*macs_and_aliases):
-        mac_addresses = wake_call.pop("macs")
+        mac_addresses = wake_call.pop('macs')
         try:
             wake(*mac_addresses, **wake_call)
         except ValueError as e:
@@ -344,10 +344,10 @@ if __name__ == "__main__":
             for mac in mac_addresses:
                 log.append(
                     MAC=mac,
-                    IP=wake_call.get("ip"),
-                    Port=wake_call.get("port"),
-                    Interface=wake_call.get("interface"),
-                    Repeat=wake_call.get("repeat"),
+                    IP=wake_call.get('ip'),
+                    Port=wake_call.get('port'),
+                    Interface=wake_call.get('interface'),
+                    Repeat=wake_call.get('repeat'),
                 )
     if log and not quiet:
         print(log)
